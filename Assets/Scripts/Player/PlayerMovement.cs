@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
 
     private InputSystem inputActions;
     private Vector2 moveInput;
-    private bool facingRight = false; 
+    private bool facingRight = false;
 
     void Awake()
     {
@@ -25,32 +25,32 @@ public class PlayerMovement : MonoBehaviour
     {
         inputActions.Player.Enable();
     }
-    
+
     void OnDisable()
     {
         inputActions.Player.Disable();
     }
-    
+
     void Update()
     {
-        moveInput = inputActions.Player.Move.ReadValue<Vector2>().normalized; 
+        moveInput = inputActions.Player.Move.ReadValue<Vector2>().normalized;
 
         animator.SetFloat("Speed", moveInput.magnitude);
-        
-        if ((moveInput.x > 0 && !facingRight ) || (moveInput.x < 0 && facingRight))
+
+        if ((moveInput.x > 0 && !facingRight) || (moveInput.x < 0 && facingRight))
         {
             facingRight = !facingRight;
             spriteRenderer.flipX = facingRight;
         }
 
     }
-    
+
     void FixedUpdate()
     {
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
-    
+
     void OnDestroy()
     {
         inputActions?.Dispose();
