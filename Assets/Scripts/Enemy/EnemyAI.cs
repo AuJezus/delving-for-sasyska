@@ -10,6 +10,10 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int contactDamage = 1;
 
+    [Header("Contact Damage")]
+    [Tooltip("Seconds between repeated contact damage")]
+    [SerializeField] private float contactDamageCooldown = 1f;
+
     [Header("Drop")]
     [SerializeField] private GameObject sasyskaPrefab;
 
@@ -19,6 +23,11 @@ public class EnemyAI : MonoBehaviour
     private Rigidbody2D rb;
     private Transform player;
     private Vector2 moveDirection;
+
+    // contact‐damage tracking
+    private bool touchingPlayer;
+    private PlayerHealth playerHealthRef;
+    private float nextContactDamageTime;
 
     void Awake()
     {
@@ -35,17 +44,13 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
-
-        float dist = Vector2.Distance(transform.position, player.position);
-        switch (currentState)
+        if (player != null)
         {
-            case State.Idle:
-                if (dist <= aggroRadius)
-                    currentState = State.Chasing;
-                break;
-
-            case State.Chasing:
+            float dist = Vector2.Distance(transform.position, player.position);
+            if (currentState == State.Idle && dist <= aggroRadius)
+                currentState = State.Chasing;
+            else if (currentState == State.Chasing)
+            {
                 if (dist > aggroRadius)
                 {
                     currentState = State.Idle;
@@ -56,7 +61,15 @@ public class EnemyAI : MonoBehaviour
                     moveDirection = (player.position - transform.position)
                                     .normalized;
                 }
-                break;
+            }
+        }
+
+        // Handle repeated contact damage
+        if (touchingPlayer && playerHealthRef != null &&
+            Time.time >= nextContactDamageTime)
+        {
+            playerHealthRef.TakeDamage(contactDamage);
+            nextContactDamageTime = Time.time + contactDamageCooldown;
         }
     }
 
@@ -69,11 +82,24 @@ public class EnemyAI : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.CompareTag("Player"))
+        if (!col.collider.CompareTag("Player")) return;
+
+        touchingPlayer = true;
+        playerHealthRef = col.collider.GetComponent<PlayerHealth>();
+
+        if (playerHealthRef != null)
         {
-            var ph = col.collider.GetComponent<PlayerHealth>();
-            if (ph != null) ph.TakeDamage(contactDamage);
+            playerHealthRef.TakeDamage(contactDamage);
+            nextContactDamageTime = Time.time + contactDamageCooldown;
         }
+    }
+
+    void OnCollisionExit2D(Collision2D col)
+    {
+        if (!col.collider.CompareTag("Player")) return;
+
+        touchingPlayer = false;
+        playerHealthRef = null;
     }
 
     public void TakeDamage(int amount)
@@ -81,23 +107,23 @@ public class EnemyAI : MonoBehaviour
         if (amount <= 0) return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
-        // TODO: play hit VFX/SFX here
 
         if (currentHealth == 0) Die();
     }
 
     private void Die()
     {
-        // TODO: play death animation
-
         if (GameObject.FindGameObjectsWithTag("Enemy").Length == 1)
         {
-            GameObject dungeonPortal = GameObject.FindGameObjectWithTag("Finish");
-            dungeonPortal.SetActive(true);
-            dungeonPortal.transform.position = transform.position;
+            var portal = GameObject.FindGameObjectWithTag("Finish");
+
+            portal.SetActive(true);
+            portal.transform.position = transform.position;
         }
         else if (sasyskaPrefab != null)
+        {
             Instantiate(sasyskaPrefab, transform.position, Quaternion.identity);
+        }
 
         Destroy(gameObject);
     }

@@ -1,23 +1,26 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider2D))]
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
-    [SerializeField]
-    private int maxHealth = 5;
-
+    [SerializeField] private int maxHealth = 5;
     private int currentHealth;
 
-    [Header("Events")]
-    public UnityEvent onHurt;
-    public UnityEvent onHeal;
-    public UnityEvent onDeath;
+    [Header("Scene select")]
+    [SerializeField] public string startMenuScene;
+
+    [System.Serializable]
+    public class HealthChangedEvent : UnityEvent<int, int> { }
+
+    public HealthChangedEvent onHealthChanged;
 
     void Awake()
     {
         currentHealth = maxHealth;
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int amount)
@@ -25,26 +28,15 @@ public class PlayerHealth : MonoBehaviour
         if (amount <= 0) return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
-        onHurt?.Invoke();
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        if (currentHealth == 0)
-            Die();
-    }
-
-    public void Heal(int amount)
-    {
-        if (amount <= 0 || currentHealth == maxHealth) return;
-
-        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        onHeal?.Invoke();
+        if (currentHealth == 0) Die();
     }
 
     private void Die()
     {
-        onDeath?.Invoke();
-        Debug.Log("Player has died.");
+        SceneManager.LoadScene(startMenuScene);
     }
-
 
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
