@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Tooltip("Time in seconds before auto‐destruct")]
-    public float lifetime = 2f;
+    [Header("Bullet")]
+    [SerializeField] private int damage = 1;
+    [SerializeField] private float lifetime = 2f;
 
     void Start()
     {
@@ -12,6 +13,10 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        var enemy = other.GetComponent<EnemyAI>();
+        if (enemy != null)
+            enemy.TakeDamage(damage);
+
         Destroy(gameObject);
     }
 }
