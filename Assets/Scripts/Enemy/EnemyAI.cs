@@ -10,6 +10,9 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int contactDamage = 1;
 
+    [Header("Drop")]
+    [SerializeField] private GameObject sasyskaPrefab;
+
     private int currentHealth;
     private enum State { Idle, Chasing }
     private State currentState = State.Idle;
@@ -85,7 +88,17 @@ public class EnemyAI : MonoBehaviour
 
     private void Die()
     {
-        // TODO: play death animation, drop loot, etc.
+        // TODO: play death animation
+
+        if (GameObject.FindGameObjectsWithTag("Enemy").Length == 1)
+        {
+            GameObject dungeonPortal = GameObject.FindGameObjectWithTag("Finish");
+            dungeonPortal.SetActive(true);
+            dungeonPortal.transform.position = transform.position;
+        }
+        else if (sasyskaPrefab != null)
+            Instantiate(sasyskaPrefab, transform.position, Quaternion.identity);
+
         Destroy(gameObject);
     }
 

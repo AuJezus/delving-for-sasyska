@@ -15,9 +15,9 @@ public class GameManager : MonoBehaviour
 
     public void GenerateLevel()
     {
-        // Clear any existing enemies in the scene
-        var oldEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (var e in oldEnemies)
+        // Clear any old objects
+        var gameObjectsToClear = GameObject.FindGameObjectsWithTag("Enemy").Concat(GameObject.FindGameObjectsWithTag("Dropable"));
+        foreach (var e in gameObjectsToClear)
             Destroy(e);
 
         // Subscribe to the generator’s completion event
