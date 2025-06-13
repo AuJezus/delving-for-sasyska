@@ -20740,8 +20740,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonGenerator: {fileID: 1671293750}
+  gameManager: {fileID: 1671293753}
   enemyPrefab: {fileID: 180409372370926918, guid: 697796d68581cda0084ed0d44309adcb, type: 3}
   enemiesPerRoom: 1
+  dificultyIncrease: 0.3
 --- !u!114 &1671293753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20757,6 +20759,7 @@ MonoBehaviour:
   dungeonGenerator: {fileID: 1671293750}
   enemySpawner: {fileID: 1671293752}
   player: {fileID: 1915599085}
+  level: 0
 --- !u!114 &1671293754
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,7 +35,7 @@ public sealed class ScoreManager : MonoBehaviour
 
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
         currentScore = 0;
-        // seed subscribers
+
         OnScoreChanged?.Invoke(currentScore, highScore);
     }
 
