@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EnemySpawner enemySpawner;
     [SerializeField] private GameObject player;
 
+    public int level = 0;
+
     void Start()
     {
         GenerateLevel();
@@ -15,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public void GenerateLevel()
     {
+        level++;
+
         // Clear any old objects
         var gameObjectsToClear = GameObject.FindGameObjectsWithTag("Enemy").Concat(GameObject.FindGameObjectsWithTag("Dropable"));
         foreach (var e in gameObjectsToClear)

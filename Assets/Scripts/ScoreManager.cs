@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public sealed class ScoreManager : MonoBehaviour
@@ -8,15 +9,15 @@ public sealed class ScoreManager : MonoBehaviour
         get
         {
             if (_instance != null) return _instance;
-            // try to find an existing one
             _instance = FindFirstObjectByType<ScoreManager>();
             if (_instance != null) return _instance;
-            // create new GameObject if none exists
             var go = new GameObject(nameof(ScoreManager));
             _instance = go.AddComponent<ScoreManager>();
             return _instance;
         }
     }
+
+    public event Action<int, int> OnScoreChanged;
 
     private int currentScore;
     private int highScore;
@@ -31,8 +32,11 @@ public sealed class ScoreManager : MonoBehaviour
         }
         _instance = this;
         DontDestroyOnLoad(gameObject);
+
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
         currentScore = 0;
+        // seed subscribers
+        OnScoreChanged?.Invoke(currentScore, highScore);
     }
 
     void OnDestroy()
@@ -50,6 +54,7 @@ public sealed class ScoreManager : MonoBehaviour
             PlayerPrefs.SetInt(HighScoreKey, highScore);
             PlayerPrefs.Save();
         }
+        OnScoreChanged?.Invoke(currentScore, highScore);
     }
 
     public int CurrentScore => currentScore;

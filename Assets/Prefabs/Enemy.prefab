@@ -176,8 +176,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  aggroRadius: 5
+  aggroRadius: 10
   maxHealth: 3
   contactDamage: 1
+  contactDamageCooldown: 1
   sasyskaPrefab: {fileID: 3386568723273542733, guid: 3a832d0c5ce9c8ee8a031759d7dda33a, type: 3}
-  dungeonPortalPrefab: {fileID: 4888781350464003014, guid: cf4f40384d83ca1a889f2282d1edb693, type: 3}

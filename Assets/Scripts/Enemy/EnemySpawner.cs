@@ -1,11 +1,15 @@
 using System.Linq;
+using NUnit.Framework;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Dungeon Ref")]
+    [Header("Refs")]
     [SerializeField]
     private CorridorFirstDungeonGenerator dungeonGenerator;
+    [SerializeField]
+    private GameManager gameManager;
+
 
     [Header("Enemy")]
     [SerializeField]
@@ -14,10 +18,14 @@ public class EnemySpawner : MonoBehaviour
     [Header("Tuning")]
     [Tooltip("How many enemies to spawn in each room (can be fractional)")]
     [SerializeField]
-    private float enemiesPerRoom = 1f;
+    public float enemiesPerRoom = 1f;
+
+    public float dificultyIncrease = 0.3f;
+
 
     public void SpawnEnemiesExceptRoom(int excludedRoomIndex)
     {
+        enemiesPerRoom += (gameManager.level - 1) * 0.3f;
         var rooms = dungeonGenerator.Rooms;
         if (rooms == null || rooms.Count == 0)
         {
