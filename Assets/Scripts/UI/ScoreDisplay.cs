@@ -26,9 +26,9 @@ public class ScoreDisplay : MonoBehaviour
     {
         if (currentScoreText != null)
         {
-            currentScoreText.text = currentScoreText.text.Replace(":score", current.ToString());
+            currentScoreText.text = "Score: " + current.ToString();
         }
 
-        highScoreText.text = highScoreText.text.Replace(":score", high.ToString());
+        highScoreText.text = "Highscore: " + high.ToString();
     }
 }

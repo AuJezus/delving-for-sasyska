@@ -115,9 +115,9 @@ public class EnemyAI : MonoBehaviour
     {
         if (GameObject.FindGameObjectsWithTag("Enemy").Length == 1)
         {
-            var portal = GameObject.FindGameObjectWithTag("Finish");
+            DungeonPortal portal = FindFirstObjectByType<DungeonPortal>();
 
-            portal.SetActive(true);
+            portal.ShowPortal();
             portal.transform.position = transform.position;
         }
         else if (sasyskaPrefab != null)

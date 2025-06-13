@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class ScoreManager : MonoBehaviour
 {
@@ -33,15 +34,37 @@ public sealed class ScoreManager : MonoBehaviour
         _instance = this;
         DontDestroyOnLoad(gameObject);
 
-        highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
-        currentScore = 0;
+        // Subscribe to the sceneLoaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
-        OnScoreChanged?.Invoke(currentScore, highScore);
+        highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        ResetCurrentScore(); // Reset score on initial startup
     }
 
     void OnDestroy()
     {
-        if (_instance == this) _instance = null;
+        if (_instance == this)
+        {
+            _instance = null;
+            // Unsubscribe to prevent memory leaks
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Check if the loaded scene is your main menu scene
+        if (scene.name == "StartMenu")
+        {
+            ResetCurrentScore();
+        }
+    }
+
+
+    public void ResetCurrentScore()
+    {
+        currentScore = 0;
+        OnScoreChanged?.Invoke(currentScore, highScore);
     }
 
     public void AddScore(int amount)
